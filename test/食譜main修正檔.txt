@@ -1,0 +1,51 @@
+# main.py
+
+import random
+import time
+from recipes import recipes
+from recipes_ing import recipes_ing
+from recipes_step import recipes_step
+from recipes_nut import recipes_nut
+from user_input import get_user_input
+
+def format_recipe(recipe_name):
+    """
+    格式化並輸出指定食譜的詳細信息。
+    :param recipe_name: 食譜名稱
+    :return: 格式化後的食譜信息
+    """
+    # 獲取材料列表
+    ingredients = recipes_ing.get(recipe_name, {}).get('材料', [])
+    ingredients_formatted = "材料：" + ', '.join(ingredients)
+
+    # 獲取烹飪步驟
+    steps = recipes_step.get(recipe_name, {}).get('步驟', [])
+    steps_formatted = "烹飪步驟：" + '\n'.join(steps)
+
+    # 獲取營養信息
+    calories = recipes_nut.get(recipe_name, "未知")
+    calories_formatted = f"估算熱量：{calories} 卡路里"
+
+    # 整合所有信息
+    full_recipe = f"{recipe_name}\n{ingredients_formatted}\n{steps_formatted}\n{calories_formatted}"
+    return full_recipe
+
+def main():
+    season, meat, cuisine = get_user_input()
+    selected_recipes = get_recipe(season, meat, cuisine)
+
+    if selected_recipes:
+        selected_recipe = random.choice(selected_recipes)
+        print("推薦食譜：", selected_recipe)
+        time.sleep(1)
+
+        # 使用 format_recipe 函數來格式化並輸出食譜信息
+        print(format_recipe(selected_recipe))
+    else:
+        print("沒有找到匹配的食譜。")
+
+def get_recipe(season, meat, cuisine):
+    return recipes.get(season, {}).get(meat, {}).get(cuisine, [])
+
+if __name__ == "__main__":
+    main()
